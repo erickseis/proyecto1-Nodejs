@@ -4,9 +4,9 @@ const express = require('express');
 const {
 	getAllUsers,
 	createUser,
-	// updateUser,
-	// deleteUser,
-	// login,
+	deleteUser,
+	login,
+	updatedUser,
 } = require('../controllers/user.controller');
 
 // Middlewares
@@ -24,7 +24,9 @@ const usersRouter = express.Router();
 
 // usersRouter.post('/', createUserValidators, createUser);
 usersRouter.post('/', createUser);
-
+usersRouter.post('/login', login)
+usersRouter.patch('/:id', updatedUser)
+usersRouter.delete('/:id', deleteUser);
 // usersRouter.post('/login', login);
 
 // Protecting below endpoints
