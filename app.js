@@ -1,7 +1,9 @@
 const express = require('express');
+const { orderRouter } = require('./routes/orders.routes');
 
 // Routers
 const { usersRouter } = require('./routes/users.routes');
+
 // const { postsRouter } = require('./routes/posts.routes');
 // const { commentsRouter } = require('./routes/comments.routes');
 
@@ -14,6 +16,7 @@ app.use(express.json());
 // Define endpoints
 // // /posts
 app.use('/api/v1/users', usersRouter);
+app.use('//api/v1/orders', orderRouter)
 // app.use('/api/v1/posts', postsRouter); // next(error)
 // app.use('/api/v1/comments', commentsRouter);
 

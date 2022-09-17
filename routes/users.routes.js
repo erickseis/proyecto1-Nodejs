@@ -8,6 +8,7 @@ const {
 	login,
 	updatedUser,
 } = require('../controllers/user.controller');
+const { userExists } = require('../middlewares/users.middleware');
 
 // Middlewares
 // const { userExists } = require('../middlewares/users.middlewares');
@@ -25,8 +26,8 @@ const usersRouter = express.Router();
 // usersRouter.post('/', createUserValidators, createUser);
 usersRouter.post('/', createUser);
 usersRouter.post('/login', login)
-usersRouter.patch('/:id', updatedUser)
-usersRouter.delete('/:id', deleteUser);
+usersRouter.patch('/:id', userExists, updatedUser)
+usersRouter.delete('/:id', userExists, deleteUser);
 // usersRouter.post('/login', login);
 
 // Protecting below endpoints
