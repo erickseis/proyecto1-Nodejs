@@ -4,126 +4,177 @@ const dotenv = require('dotenv');
 
 //Models
 const { User } = require('../models/user.model');
-const { Reviews } = require('../models/reviews.model');
-const { Restaurants } = require('../models/restaurants.model');
 const { Orders } = require('../models/orders.model');
 const { Meals } = require('../models/meals.model');
+const { Restaurants } = require('../models/restaurants.model');
 
 //Utils
-
-const { AppError } = require('../utils/appError.util');
 const { catchAsync } = require('../utils/catchAsync.util');
+const { AppError } = require('../utils/appError.util');
 
 dotenv.config({ path: '../config.env' });
 
 //Define controllers
-
-const getAllUsers = catchAsync(async (req, res, next) => {
-    const users = await User.findAll({
-        attributes: { exclude: ['password'] },
-        where: { status: 'active' },
-        include: [
-            {
-                model: Orders,
-                include: {
-                    model: Meals,
-                    include: { model: User }
-                }
-            },
-            {
-                model: Meals,
-            }
-        ],
-    })
-    res.status(200).json({
-        status: 'success',
-        data: { users },
-    });
-});
-
-
-
+// >C< R U D
 const createUser = catchAsync(async (req, res, next) => {
-    const { name, email, password, role } = req.body;
-
-    if (role !== 'admin' && role !== 'normal') {
-        return res.status(400).json({
-            status: 'error',
-            message: 'Invalid role',
-        });
-    }
+    const { name, email, password, role } = req.body
 
     // Encrypt the password
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(12)
+    const hashedPassword = await bcrypt.hash(password, salt)
 
     const newUser = await User.create({
         name,
         email,
         password: hashedPassword,
         role,
-    });
+    })
 
     // Remove password from response
-    newUser.password = undefined;
+    newUser.password = undefined
+    // this don't work
+    // newUser.createdAt = undefined
+    // newUser.updatedAt = undefined
 
-    // 201 -> Success and a resource has been created
+    // User has been created
     res.status(201).json({
         status: 'success',
-        data: { newUser },
-    });
-});
-const updatedUser = catchAsync(async (req, res) => {
-    const { name, email } = req.body
-    const { user } = req
-    await user.update({ name, email })
-
-    res.status(200).json({
-        status: 'succes',
-        data: { user }
+        newUser,
     })
 })
 
-const deleteUser = catchAsync(async (req, res) => {
-    const { user } = req;
+// C >R< U D
+const readActiveUsers = catchAsync(async (req, res, next) => {
+    const users = await User.findAll({
+        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        where: { status: 'active' },
+        include: [{ model: Order }],
+    })
 
-    await user.update({ status: 'disable' })
+    res.status(200).json({
+        status: 'success',
+        data: {
+            users,
+        },
+    })
+})
 
-    res.status(204).json({ status: 'succes' })
+// C R >U< D
+const updateUserById = catchAsync(async (req, res, next) => {
+    const { name, email } = req.body
+    const { sessionUser } = req
+
+    // Update using a model's instance
+    await sessionUser.update({ name, email })
+
+    res.status(200).json({
+        status: 'success',
+        sessionUser,
+    })
+})
+
+// C R U >D<
+const deleteUserById = catchAsync(async (req, res, next) => {
+    const { sessionUser } = req
+
+    // Soft delete
+    await sessionUser.update({ status: 'deleted' })
+
+    res.status(204).json({ status: 'success' })
 })
 
 const login = catchAsync(async (req, res, next) => {
+    // Get email and password from req.body
     const { email, password } = req.body
 
+    // Validate if the user exist with given email
     const user = await User.findOne({
-        where: { email, status: 'active' }
-    });
-    // if (!user || (await bcrypt.compare(password, user.password))) {
-    //     return next(new AppError('Wrong credentials', 400))
-    // }
+        where: { email, status: 'active' },
+    })
+
+    // Compare passwords (entered password vs db password)
+    // If user doesn't exists or passwords doesn't match, send error
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+        return next(new AppError('Wrong credentials', 400))
+    }
+
+    // Remove password from response
     user.password = undefined
 
-    const token = jwt.sign({ id: user.id },
-        process.env.JWT_SECRET,
-        {
-            expiresIn: '30d'
-        });
+    // Generate JWT (payload, secretOrPrivateKey, options)
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+        expiresIn: '30d',
+    })
+
     res.status(200).json({
         status: 'success',
-        data: { user, token },
+        token,
     })
 })
 
+const readOrders = catchAsync(async (req, res, next) => {
+    const { id } = req.sessionUser
 
+    const user = await User.findOne({
+        where: { id },
+        attributes: ['id', 'name', 'email'],
+        include: {
+            model: Orders,
+            attributes: ['id', 'totalPrice', 'quantity', 'status'],
+            include: {
+                model: Meals,
+                attributes: ['id', 'name', 'price', 'status'],
+                include: {
+                    model: Restaurants,
+                    attributes: { exclude: ['createdAt', 'updatedAt'] },
+                },
+            },
+        },
+    })
 
+    res.status(200).json({
+        status: 'success',
+        user,
+    })
+})
 
+const readOrderById = catchAsync(async (req, res, next) => {
+    const { order } = req
+    const user = req.sessionUser
 
+    // const user = await User.findOne({
+    //     where: { id },
+    //     attributes: ['id', 'name', 'email'],
+    //     include: {
+    //         model: Order,
+    //         where: { id: orderId },
+    //         attributes: ['id', 'totalPrice', 'quantity', 'status'],
+    //         include: {
+    //             model: Meal,
+    //             attributes: ['id', 'name', 'price', 'status'],
+    //             include: {
+    //                 model: Restaurant,
+    //                 attributes: { exclude: ['createdAt', 'updatedAt'] },
+    //             },
+    //         },
+    //     },
+    // })
 
+    res.status(200).json({
+        status: 'success',
+        data: {
+            user,
+            order,
+        },
+    })
+})
 
 module.exports = {
-    getAllUsers,
+    readActiveUsers,
     createUser,
-    updatedUser,
-    deleteUser,
+    updateUserById,
+    deleteUserById,
     login,
-};
+    readOrders,
+    readOrderById,
+}

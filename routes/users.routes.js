@@ -2,42 +2,61 @@ const express = require('express');
 
 // Controllers
 const {
-	getAllUsers,
+	readActiveUsers,
 	createUser,
-	deleteUser,
+	updateUserById,
+	deleteUserById,
 	login,
-	updatedUser,
+	readOrders,
+	readOrderById
 } = require('../controllers/user.controller');
+
+//middlewares
 const { userExists } = require('../middlewares/users.middleware');
+const { orderExists } = require('../middlewares/orders.middleware')
 
-// Middlewares
-// const { userExists } = require('../middlewares/users.middlewares');
-// const {
-// 	protectSession,
-// 	protectUsersAccount,
-// 	protectAdmin,
-// } = require('../middlewares/auth.middlewares');
-// const {
-// 	createUserValidators,
-// } = require('../middlewares/validators.middlewares');
+//auth middlewares
 
-const usersRouter = express.Router();
+const {
+	protectSession,
+	protectUsersAccount,
+	protectAdmin
+} = require('../middlewares/auth.middlewares')
 
-// usersRouter.post('/', createUserValidators, createUser);
-usersRouter.post('/', createUser);
-usersRouter.post('/login', login)
-usersRouter.patch('/:id', userExists, updatedUser)
-usersRouter.delete('/:id', userExists, deleteUser);
-// usersRouter.post('/login', login);
+//validators middlewares
+const {
+	createUserValidators,
+	updateUserValidators,
+	loginUserValidators
+} = require('../middlewares/usersValidators.middlewares')
 
-// Protecting below endpoints
-// usersRouter.use(protectSession);
+// Creating router
+const usersRouter = express.Router()
 
-// usersRouter.get('/', protectAdmin, getAllUsers);
-usersRouter.get('/', getAllUsers);
+// Assigning end-points
+usersRouter.post('/signup', createUserValidators, createUser)
 
-// usersRouter.patch('/:id', userExists, protectUsersAccount, updateUser);
+usersRouter.post('/login', loginUserValidators, login)
 
-// usersRouter.delete('/:id', userExists, protectUsersAccount, deleteUser);
+// Protecting endpoints
+usersRouter.use(protectSession)
 
-module.exports = { usersRouter };
+// Access to admin users
+usersRouter.get('/', protectAdmin, readActiveUsers)
+
+// Account owner access
+usersRouter.patch(
+	'/:id',
+	userExists,
+	protectUsersAccount,
+	updateUserValidators,
+	updateUserById
+)
+
+usersRouter.delete('/:id', userExists, protectUsersAccount, deleteUserById)
+
+usersRouter.get('/orders', readOrders)
+
+usersRouter.get('/orders/:id', orderExists, readOrderById)
+
+module.exports = { usersRouter }

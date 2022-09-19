@@ -1,11 +1,10 @@
 const express = require('express');
-const { orderRouter } = require('./routes/orders.routes');
 
-// Routers
+//import routes
 const { usersRouter } = require('./routes/users.routes');
-
-// const { postsRouter } = require('./routes/posts.routes');
-// const { commentsRouter } = require('./routes/comments.routes');
+const { restaurantRouter } = require('./routes/restaurant.routes');
+const { mealsRouter } = require('./routes/meals.routes');
+const { orderRouter } = require('./routes/orders.routes');
 
 // Init our Express app
 const app = express();
@@ -16,22 +15,23 @@ app.use(express.json());
 // Define endpoints
 // // /posts
 app.use('/api/v1/users', usersRouter);
-app.use('//api/v1/orders', orderRouter)
-// app.use('/api/v1/posts', postsRouter); // next(error)
-// app.use('/api/v1/comments', commentsRouter);
+app.use('/api/v1/orders', orderRouter)
+app.use('/api/v1/meals', mealsRouter)
+app.use('/api/v1/restaurants', restaurantRouter)
+
 
 // Global error handler
-// app.use((error, req, res, next) => {
-//     const statusCode = error.statusCode || 500;
-//     const status = error.status || 'fail';
+app.use((error, req, res, next) => {
+    const statusCode = error.statusCode || 500
+    const status = error.status || 'fail'
 
-//     res.status(statusCode).json({
-//         status,
-//         message: error.message,
-//         error,
-//         stack: error.stack,
-//     });
-// });
+    res.status(statusCode).json({
+        status,
+        message: error.message,
+        error,
+        stack: error.stack,
+    })
+})
 
 // Catch non-existing endpoints
 app.all('*', (req, res) => {

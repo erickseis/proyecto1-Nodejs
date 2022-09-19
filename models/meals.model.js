@@ -12,7 +12,7 @@ const Meals = db.define('meals', {
         allowNull: false,
     },
     price: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.REAL,
         allowNull: false,
     },
     restaurantId: {

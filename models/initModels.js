@@ -1,51 +1,31 @@
 // Models
-const { User } = require('./user.model');
-const { Reviews } = require('./reviews.model');
-const { Restaurants } = require('./restaurants.model');
-const { Orders } = require('./orders.model');
 const { Meals } = require('./meals.model')
+const { Orders } = require('./orders.model');
+const { Restaurants } = require('./restaurants.model');
+const { Reviews } = require('./reviews.model');
+const { User } = require('./user.model');
 
 
 const initModels = () => {
-	// 1 User <----> M Post
-	Restaurants.hasMany(Reviews, { foreignKey: 'id' });
-	Reviews.hasMany(User, { foreignKey: 'userId' });
+	// 1 Restaurant <----> M Meal
+	Restaurants.hasMany(Meals, { foreignKey: 'restaurantId' })
+	Meals.belongsTo(Restaurants)
 
+	// 1 Restaurant <----> M Review
+	Restaurants.hasMany(Reviews, { foreignKey: 'restaurantId' })
+	Reviews.belongsTo(Restaurants)
 
+	// 1 Meal <----> 1 Order
+	Meals.hasOne(Orders, { foreignKey: 'mealId' })
+	Orders.belongsTo(Meals)
 
-	// 1 User <----> M Post
-	User.hasMany(Orders, { foreignKey: 'id' });
-	Orders.belongsTo(Meals, { foreignKey: 'mealId' });
+	// 1 User <----> M Order
+	User.hasMany(Orders, { foreignKey: 'userId' })
+	Orders.belongsTo(User)
 
-
-	Meals.hasMany(Restaurants, { foreignKey: 'restaurantId' });
-
-
-
-	// // 1 User <----> M Post
-	// User.hasMany(Post, { foreignKey: 'userId' });
-	// Post.belongsTo(User);
-	// // 1 User <----> M Post
-	// User.hasMany(Post, { foreignKey: 'userId' });
-	// Post.belongsTo(User);
-
-
-
-
-
-
-
-
-
-
-
-	// 1 Post <----> M Comment
-	// Post.hasMany(Comment, { foreignKey: 'postId' });
-	// Comment.belongsTo(Post);
-
-	// // 1 User <----> M Comment
-	// User.hasMany(Comment, { foreignKey: 'userId' });
-	// Comment.belongsTo(User);
+	// 1 User <----> M Review
+	User.hasMany(Reviews, { foreignKey: 'userId' })
+	Reviews.belongsTo(User)
 };
 
 module.exports = { initModels };
