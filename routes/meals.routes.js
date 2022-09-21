@@ -35,11 +35,9 @@ mealsRouter.use(protectSession)
 
 // Protecting endpoints to admin level
 mealsRouter.use(protectAdmin)
-
 mealsRouter.post('/:id', restaurantIsActive, mealValidators, createMeals)
 mealsRouter.patch('/:id', mealExists, mealValidators, updateMealById)
 mealsRouter.delete('/:id', mealExists, deleteMealById)
-
 mealsRouter.post('/:id', createMeals)
 
 

@@ -15,7 +15,7 @@ const { AppError } = require('../utils/appError.util');
 dotenv.config({ path: '../config.env' });
 
 //Define controllers
-// >C< R U D
+// CRUD
 const createUser = catchAsync(async (req, res, next) => {
     const { name, email, password, role } = req.body
 
@@ -43,7 +43,7 @@ const createUser = catchAsync(async (req, res, next) => {
     })
 })
 
-// C >R< U D
+// CRUD
 const readActiveUsers = catchAsync(async (req, res, next) => {
     const users = await User.findAll({
         attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
@@ -59,7 +59,7 @@ const readActiveUsers = catchAsync(async (req, res, next) => {
     })
 })
 
-// C R >U< D
+// CRUD
 const updateUserById = catchAsync(async (req, res, next) => {
     const { name, email } = req.body
     const { sessionUser } = req
@@ -73,7 +73,7 @@ const updateUserById = catchAsync(async (req, res, next) => {
     })
 })
 
-// C R U >D<
+// CRUD
 const deleteUserById = catchAsync(async (req, res, next) => {
     const { sessionUser } = req
 
@@ -141,25 +141,6 @@ const readOrders = catchAsync(async (req, res, next) => {
 const readOrderById = catchAsync(async (req, res, next) => {
     const { order } = req
     const user = req.sessionUser
-
-    // const user = await User.findOne({
-    //     where: { id },
-    //     attributes: ['id', 'name', 'email'],
-    //     include: {
-    //         model: Order,
-    //         where: { id: orderId },
-    //         attributes: ['id', 'totalPrice', 'quantity', 'status'],
-    //         include: {
-    //             model: Meal,
-    //             attributes: ['id', 'name', 'price', 'status'],
-    //             include: {
-    //                 model: Restaurant,
-    //                 attributes: { exclude: ['createdAt', 'updatedAt'] },
-    //             },
-    //         },
-    //     },
-    // })
-
     res.status(200).json({
         status: 'success',
         data: {

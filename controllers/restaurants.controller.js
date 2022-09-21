@@ -13,7 +13,7 @@ const { AppError } = require('../utils/appError.util')
 
 dotenv.config()
 
-// >C< R U D
+// CRUD
 const createRestaurant = catchAsync(async (req, res, next) => {
     const { name, address, rating } = req.body
 
@@ -29,7 +29,7 @@ const createRestaurant = catchAsync(async (req, res, next) => {
     })
 })
 
-// C >R< U D
+// CRUD
 const readActiveRestaurants = catchAsync(async (req, res, next) => {
     const restaurants = await Restaurants.findAll({
         where: { status: 'active' },
@@ -64,7 +64,7 @@ const readActiveRestaurants = catchAsync(async (req, res, next) => {
     })
 })
 
-// C >R< U D
+// CRUD
 const readRestaurantById = catchAsync(async (req, res, next) => {
     const { id } = req.restaurant
 
@@ -104,7 +104,7 @@ const readRestaurantById = catchAsync(async (req, res, next) => {
     })
 })
 
-// C R >U< D
+// CRUD
 const updateRestaurantById = catchAsync(async (req, res, next) => {
     const { name, address } = req.body
     const { restaurant } = req
@@ -117,7 +117,7 @@ const updateRestaurantById = catchAsync(async (req, res, next) => {
     })
 })
 
-// C R U >D<
+// CRUD
 const deleteRestaurantById = catchAsync(async (req, res, next) => {
     const { restaurant } = req
 

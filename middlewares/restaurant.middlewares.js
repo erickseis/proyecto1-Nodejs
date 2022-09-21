@@ -8,7 +8,7 @@ const { AppError } = require('../utils/appError.util')
 const restaurantIsActive = catchAsync(async (req, res, next) => {
     const id = req.params.id || req.params.restaurantId
 
-    const restaurant = await Restaurant.findOne({
+    const restaurant = await Restaurants.findOne({
         where: { id, status: 'active' },
     })
 

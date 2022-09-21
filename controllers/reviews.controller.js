@@ -10,7 +10,7 @@ const { catchAsync } = require('../utils/catchAsync.util')
 dotenv.config()
 
 
-// >C< R U D
+// CRUD
 const createRestaurantReview = catchAsync(async (req, res, next) => {
     const restaurantId = req.restaurant.id
 
@@ -31,7 +31,7 @@ const createRestaurantReview = catchAsync(async (req, res, next) => {
     })
 })
 
-// C R >U< D
+// CRUD
 const updateReviewById = catchAsync(async (req, res, next) => {
     const { review } = req
 
@@ -48,7 +48,7 @@ const updateReviewById = catchAsync(async (req, res, next) => {
     })
 })
 
-// C R U >D<
+// CRUD
 const deleteReviewById = catchAsync(async (req, res, next) => {
     const { review } = req
 

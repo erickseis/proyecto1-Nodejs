@@ -14,7 +14,7 @@ const { AppError } = require('../utils/appError.util')
 dotenv.config()
 
 
-// >C< R U D
+// CRUD
 const createOrder = catchAsync(async (req, res, next) => {
   const { sessionUser } = req
   const { quantity, mealId } = req.body
@@ -40,7 +40,7 @@ const createOrder = catchAsync(async (req, res, next) => {
   })
 })
 
-// C >R< U D
+// CRUD
 const readOrdersByUser = catchAsync(async (req, res, next) => {
   const { id } = req.sessionUser
 
@@ -63,7 +63,7 @@ const readOrdersByUser = catchAsync(async (req, res, next) => {
   })
 })
 
-// C R >U< D
+// CRUD
 const updateOrder = catchAsync(async (req, res, next) => {
   const { order } = req
 
@@ -75,7 +75,7 @@ const updateOrder = catchAsync(async (req, res, next) => {
   })
 })
 
-// C R U >D<
+// CRUD
 const deletOrder = catchAsync(async (req, res, next) => {
   const { order } = req
 

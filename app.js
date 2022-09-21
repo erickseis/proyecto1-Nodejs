@@ -13,7 +13,6 @@ const app = express();
 app.use(express.json());
 
 // Define endpoints
-// // /posts
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/orders', orderRouter)
 app.use('/api/v1/meals', mealsRouter)

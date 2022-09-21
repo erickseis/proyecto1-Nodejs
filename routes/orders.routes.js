@@ -27,15 +27,9 @@ const orderRouter = express.Router();
 
 //protecting endpoints
 orderRouter.use(protectSession)
-
 orderRouter.post('/', createMealValidators, createOrder)
-
 orderRouter.get('/me', readOrdersByUser)
-
 orderRouter.patch('/:id', orderExists, protectOrderOwner, updateOrder)
-
 orderRouter.delete('/:id', orderExists, protectOrderOwner, deletOrder)
-
-
 
 module.exports = { orderRouter }
