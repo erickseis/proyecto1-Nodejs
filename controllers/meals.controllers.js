@@ -41,9 +41,6 @@ const readActiveMeals = catchAsync(async (req, res, next) => {
             model: Restaurants,
             where: { status: 'active' },
 
-            /* Here i don't use required because i think if restaurant is disabled, user can't buy this food
-            required: false, // Apply OUTER JOIN */
-
             attributes: { exclude: ['status', 'createdAt', 'updatedAt'] },
             include: {
                 model: Reviews,

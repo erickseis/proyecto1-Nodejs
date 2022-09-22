@@ -32,11 +32,7 @@ const createUser = catchAsync(async (req, res, next) => {
 
     // Remove password from response
     newUser.password = undefined
-    // this don't work
-    // newUser.createdAt = undefined
-    // newUser.updatedAt = undefined
 
-    // User has been created
     res.status(201).json({
         status: 'success',
         newUser,

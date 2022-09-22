@@ -9,7 +9,6 @@ const { User } = require('../models/user.model')
 
 //Utils
 const { catchAsync } = require('../utils/catchAsync.util')
-const { AppError } = require('../utils/appError.util')
 
 dotenv.config()
 
@@ -67,11 +66,6 @@ const readActiveRestaurants = catchAsync(async (req, res, next) => {
 // CRUD
 const readRestaurantById = catchAsync(async (req, res, next) => {
     const { id } = req.restaurant
-
-    /* Teacher i have a question:
-    Is better to make another query to the database to bring the 'meals' associated with the
-    restaurant, or is better to make the query directly in the middleware so that the entire
-    object is always in the request?  */
 
     const restaurant = await Restaurants.findOne({
         where: { id, status: 'active' },

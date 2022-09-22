@@ -23,6 +23,7 @@ const createRestaurantReview = catchAsync(async (req, res, next) => {
         comment,
         rating,
         restaurantId,
+
     })
 
     res.status(201).json({
